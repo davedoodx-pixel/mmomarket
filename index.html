@@ -997,7 +997,7 @@ body.search-focus .searchBox{
         <h1>Sản phẩm nổi bật</h1>
         <p>Danh sách sản phẩm (bấm giỏ hàng để mua nhanh)</p>
       </div>
-        <a
+     <a
   class="pill pill-zalo zaloBtnPro"
   id="zaloLink"
   href="https://zalo.me/0396298999"
@@ -1006,6 +1006,7 @@ body.search-focus .searchBox{
   <span class="zaloIcon">💬</span>
   <span class="zaloText">Chat Zalo</span>
 </a>
+
 
     </div>
 <div class="categoryBar" id="categoryBar"></div>
@@ -1157,7 +1158,7 @@ Mình cần tư vấn và chốt đơn giúp mình nhé.`;
       const btn = e.target.closest(".cartBtn");
       if(!btn) return;
       const id = btn.getAttribute("data-id");
-      const product = PRODUCTS.find(x => x.id === id);
+const product = PRODUCTS.find(x => String(x.id) === String(id));
       if(product) openModalFor(product);
     });
 
