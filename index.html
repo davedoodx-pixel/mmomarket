@@ -684,6 +684,55 @@
   text-decoration:none;
   font-weight:900;
 }
+/* ===== Danh mục ===== */
+.categoryBar{
+  max-width:1200px;
+  margin: 10px auto 12px;
+  padding: 0 16px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  overflow:auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.categoryBar::-webkit-scrollbar{ display:none; }
+
+.catBtn{
+  flex: 0 0 auto;
+  border:1px solid var(--line);
+  background: var(--card);
+  color: var(--text);
+  padding:10px 12px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:13px;
+  cursor:pointer;
+  box-shadow:0 10px 26px rgba(17,24,39,.06);
+  white-space:nowrap;
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+}
+.catBtn small{
+  font-size:11px;
+  font-weight:900;
+  color: var(--muted);
+  padding:3px 8px;
+  border-radius:999px;
+  background:#f3f4f6;
+}
+
+.catBtn.active{
+  border:none;
+  color:#fff;
+  background: linear-gradient(135deg,var(--primary),var(--primary2));
+  box-shadow:0 16px 40px rgba(79,70,229,.22);
+}
+.catBtn.active small{
+  color:#fff;
+  background: rgba(255,255,255,.20);
+}
 
   </style>
 </head>
@@ -728,16 +777,97 @@
         note:"Mail chính chủ • dùng 1 năm" },
 
       { id:"capcut-pro", name:"🎬 CapCut Pro (2-3 thiết bị)", price:"50.000đ / 1 tháng", oldPrice:"70.000đ", sale:-28, sold:420,
-        image:"capcut.png",category:"Video",
+        image:"capcut.png",category:"Thiết kế",
         note:"350.000đ / 6 tháng" },
 
       { id:"vidiq", name:"📈 VidIQ Boost (Tối ưu YouTube)", price:"149.000đ / tháng", oldPrice:"199.000đ", sale:-25, sold:88,
-        image:"vidiq.png",category:"YouTube",
+        image:"vidiq.png",category:"AI",
         note:"Tối ưu kênh • hỗ trợ SEO" },
 
       { id:"canva-pro", name:"🎨 Canva Pro (Thiết kế)", price:"50.000đ / 1 năm", oldPrice:"90.000đ", sale:-44, sold:530,
         image:"canva.png",category:"Thiết kế",
         note:"90k/2 năm • 139k/3 năm" },
+        {
+  id: 101,
+  name: "Tool Voice TTS – Không giới hạn ký tự",
+  price: "299K (Vĩnh viễn)",
+  note: "Chuyển văn bản thành giọng nói AI, dùng trọn đời",
+  image: "voice-tts.jpg",
+  sold: 124,
+  category: "Tool"
+},
+{
+  id: 102,
+  name: "Tool Voice ElevenLabs – Cao cấp",
+  price: "350K / tháng",
+  note: "Giọng nói AI cao cấp, dùng cho video & content",
+  image: "elevenlabs.jpg",
+  sold: 322,
+  category: "Tool"
+},
+{
+  id: 103,
+  name: "Tool Auto Veo3",
+  price: "99K (Vĩnh viễn)",
+  note: "Tự động hoá Veo3, tiện lợi – dễ dùng",
+  image: "veo3.jpg",
+  sold: 1.351,
+ category: "Tool"
+},
+{
+  id: 104,
+  name: "TK SORA 2",
+  price: "50K / tháng",
+  note: "Tạo video & hình ảnh AI siêu mượt",
+  image: "sora.jpg",
+  sold: 57,
+  category: "AI"
+},
+{
+  id: 105,
+  name: "Super Grok (AI thế hệ mới)",
+  price: "319K / tháng",
+  note: "Cấp sẵn hoặc nâng chính chủ",
+  image: "grok.jpg",
+  sold: 98,
+  category: "AI"
+},
+{
+  id: 106,
+  name: "Netflix Ultra 4K",
+  price: "69K / tháng",
+  note: "Chất lượng cao nhất – xem không giới hạn",
+  image: "netflix.jpg",
+  sold: 266,
+  category: "Giải trí"
+},
+{
+  id: 107,
+  name: "YouTube Premium",
+  price: "50K – 400K",
+  note: "Không quảng cáo • Nghe nhạc nền • Nhiều gói",
+  image: "youtube.jpg",
+  sold: 464,
+  category: "Giải trí"
+},
+{
+  id: 108,
+  name: "Surfshark VPN",
+  price: "40K / tháng",
+  note: "Lướt web an toàn – đổi IP toàn cầu",
+  image: "vpn.jpg",
+  sold: 75,
+  category: "VPN"
+},
+{
+  id: 109,
+  name: "Tài khoản & Dịch vụ khác",
+  price: "Liên hệ báo giá",
+  note: "Chess Kids, Elsa Speak, Tinder, AutoCAD, 1Password, Duolingo, Spotify, Grammarly, Adobe, Microsoft, Zoom, Notion, Picsart, LinkedIn, Discord…",
+  image: "more.jpg",
+  sold: 867,
+  category: "Khác"
+},
     ];
   </script>
 
