@@ -668,6 +668,76 @@ body.search-focus .searchBox{
     white-space:nowrap;
   }
 }
+    /* ===== Product Modal ===== */
+.pModalOverlay{
+  position:fixed; inset:0;
+  background:rgba(17,24,39,.60);
+  z-index:999;
+}
+.pModal{
+  position:fixed;
+  left:50%; top:50%;
+  transform:translate(-50%,-50%);
+  width:min(920px, 92vw);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:0 30px 80px rgba(0,0,0,.35);
+  z-index:1000;
+}
+.pModalClose{
+  position:absolute; right:10px; top:10px;
+  width:40px; height:40px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  cursor:pointer;
+  font-weight:900;
+}
+.pModalBody{
+  display:grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap:14px;
+  padding:14px;
+}
+.pModalImg{
+  width:100%;
+  height:320px;
+  object-fit:cover;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:#f3f4f6;
+}
+.pModalTitle{ font-weight:950; font-size:18px; line-height:1.25; }
+.pModalPrice{ margin-top:8px; font-weight:950; font-size:16px; color:var(--primary); }
+.pModalNote{ margin-top:8px; color:var(--muted); font-size:13px; line-height:1.55; }
+
+.pModalBtns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+.pBtn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-weight:950;
+  font-size:13px;
+  cursor:pointer;
+  text-decoration:none;
+  color:var(--text);
+}
+.pBtn.zalo{
+  border:none;
+  color:#fff;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  box-shadow:0 16px 40px rgba(79,70,229,.25);
+}
+.pModalHint{ margin-top:10px; color:var(--muted); font-size:12px; }
+
+@media (max-width: 760px){
+  .pModalBody{ grid-template-columns: 1fr; }
+  .pModalImg{ height:220px; }
+}
+
   </style>
 </head>
 
@@ -805,47 +875,44 @@ body.search-focus .searchBox{
 
 
     function render(list){
-      grid.innerHTML = "";
-      let totalSold = 0;
+  grid.innerHTML = "";
+  let totalSold = 0;
 
-      list.forEach(p => {
-        totalSold += (p.sold || 0);
+  list.forEach(p => {
+    totalSold += (p.sold || 0);
 
-        const card = document.createElement("div");
-        card.className = "card";
+    // 1️⃣ Tạo card
+    const card = document.createElement("div");
+    card.className = "card";
 
-        const saleText = (typeof p.sale === "number" && p.sale < 0) ? `${p.sale}%` : "";
-        const saleBadge = saleText ? `<div class="saleBadge">${saleText}</div>` : "";
+    // 2️⃣ Ghi nhớ sản phẩm này là gì
+    card.dataset.id = p.id;
 
-        card.innerHTML = `
-          ${saleBadge}
-          <div class="imgWrap">
-            <img src="${p.image}" alt="${escapeHtml(p.name)}" loading="lazy"/>
-          </div>
+    // 3️⃣ Nội dung hiển thị
+    card.innerHTML = `
+      <div class="imgWrap">
+        <img src="${p.image}" alt="${p.name}" />
+      </div>
 
-          <div class="content">
-            <div class="name">${escapeHtml(p.name)}</div>
-            <div class="priceRow">
-              <div class="price">${escapeHtml(p.price)}</div>
-              ${p.oldPrice ? `<div class="old">${escapeHtml(p.oldPrice)}</div>` : ``}
-            </div>
-            ${p.note ? `<div class="note">${escapeHtml(p.note)}</div>` : ``}
-          </div>
+      <div class="content">
+        <div class="name">${p.name}</div>
+        <div class="price">${p.price}</div>
+      </div>
+    `;
 
-          <div class="meta">
-            <div class="sold">${p.sold || 0} đã bán</div>
-            <button class="cartBtn" data-id="${p.id}" title="Mua nhanh">🛒</button>
-          </div>
-        `;
+    // 4️⃣ Khi bấm → gọi hàm openPopup
+    card.addEventListener("click", () => {
+      openPopup(p);
+    });
 
-        grid.appendChild(card);
-      });
+    // 5️⃣ Gắn card vào trang
+    grid.appendChild(card);
+  });
 
-      soldTotalEl.textContent = totalSold.toLocaleString("vi-VN");
-      const trustSoldEl = document.getElementById("trustSold");
-if(trustSoldEl) trustSoldEl.textContent = totalSold.toLocaleString("vi-VN");
+  // cập nhật đã bán
+  updateSoldUI(totalSold);
+}
 
-    }
 
     function escapeHtml(str){
       return String(str)
@@ -1139,6 +1206,90 @@ document.addEventListener("keydown", (e)=>{
     }
   }, true);
 })();
+// ===== Product Modal JS =====
+const pModalOverlay = document.getElementById("pModalOverlay");
+const pModal = document.getElementById("pModal");
+const pModalClose = document.getElementById("pModalClose");
+
+const pModalImg = document.getElementById("pModalImg");
+const pModalTitle = document.getElementById("pModalTitle");
+const pModalPrice = document.getElementById("pModalPrice");
+const pModalNote = document.getElementById("pModalNote");
+const pModalZalo = document.getElementById("pModalZalo");
+const pModalCopy = document.getElementById("pModalCopy");
+const pModalHint = document.getElementById("pModalHint");
+
+const PHONE = (typeof ZALO_PHONE !== "undefined" && ZALO_PHONE) ? String(ZALO_PHONE) : "0396298999";
+
+let currentProduct = null;
+
+function openProductModal(p){
+  currentProduct = p;
+
+  // ảnh: nếu bạn có p.image thì hiện, không thì để trống
+  if(pModalImg){
+    pModalImg.src = p.image || "";
+    pModalImg.alt = p.name || "Sản phẩm";
+    pModalImg.style.display = p.image ? "block" : "none";
+  }
+
+  if(pModalTitle) pModalTitle.textContent = p.name || "";
+  if(pModalPrice) pModalPrice.textContent = p.price || "";
+  if(pModalNote) pModalNote.textContent = p.note || p.desc || "Nhắn Zalo để được tư vấn & chốt đơn nhanh.";
+
+  // link zalo (mở chat)
+  const text = `Xin chào MMO MARKET! Mình muốn mua gói: ${p.name || ""} (${p.price || ""}). Nhờ shop tư vấn & chốt giúp mình nhé.`;
+  const zaloLink = `https://zalo.me/${PHONE}`; // zalo.me không hỗ trợ prefill text chuẩn như whatsapp, nên mình cho copy nội dung
+  if(pModalZalo) pModalZalo.href = zaloLink;
+
+  pModalOverlay.hidden = false;
+  pModal.hidden = false;
+  document.body.style.overflow = "hidden";
+
+  // lưu nội dung để copy
+  pModalCopy.dataset.msg = text;
+  if(pModalHint) pModalHint.textContent = "Mẹo: bấm Copy → mở Zalo → dán nội dung để chốt nhanh.";
+}
+
+function closeProductModal(){
+  pModalOverlay.hidden = true;
+  pModal.hidden = true;
+  document.body.style.overflow = "";
+  currentProduct = null;
+}
+
+if(pModalOverlay) pModalOverlay.addEventListener("click", closeProductModal);
+if(pModalClose) pModalClose.addEventListener("click", closeProductModal);
+document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeProductModal(); });
+
+if(pModalCopy){
+  pModalCopy.addEventListener("click", async ()=>{
+    const msg = pModalCopy.dataset.msg || "";
+    if(!msg) return;
+    try{
+      await navigator.clipboard.writeText(msg);
+      if(pModalHint) pModalHint.textContent = "✅ Đã copy! Giờ bấm 'Mở Zalo' và dán nội dung nhé.";
+      alert("Đã copy nội dung! Giờ bấm 'Mở Zalo' và dán nhé.");
+    }catch(e){
+      alert("Không copy tự động được. Bạn hãy copy thủ công nội dung trong alert tiếp theo.");
+      alert(msg);
+    }
+  });
+}
+
+// ===== BẮT SỰ KIỆN CLICK TRÊN GRID (khỏi sửa render nhiều) =====
+const gridEl = document.getElementById("grid");
+if(gridEl){
+  gridEl.addEventListener("click", (e)=>{
+    // tìm phần tử card có data-id
+    const card = e.target.closest("[data-pid]");
+    if(!card) return;
+
+    const pid = card.getAttribute("data-pid");
+    const p = (typeof PRODUCTS !== "undefined") ? PRODUCTS.find(x => String(x.id) === String(pid)) : null;
+    if(p) openProductModal(p);
+  });
+}
 
 </script>
 <section class="trust">
@@ -1252,6 +1403,28 @@ document.addEventListener("keydown", (e)=>{
 <!-- Tooltip -->
 <div class="tip" id="tip" role="tooltip"></div>
 <div class="searchFocusOverlay" id="searchFocusOverlay"></div>
+<!-- ===== Product Modal ===== -->
+<div class="pModalOverlay" id="pModalOverlay" hidden></div>
+
+<div class="pModal" id="pModal" hidden>
+  <button class="pModalClose" id="pModalClose" aria-label="Đóng">✕</button>
+
+  <div class="pModalBody">
+    <img class="pModalImg" id="pModalImg" alt="">
+    <div class="pModalInfo">
+      <div class="pModalTitle" id="pModalTitle"></div>
+      <div class="pModalPrice" id="pModalPrice"></div>
+      <div class="pModalNote" id="pModalNote"></div>
+
+      <div class="pModalBtns">
+        <a class="pBtn zalo" id="pModalZalo" href="#" target="_blank" rel="noopener">💬 Mở Zalo (chốt đơn)</a>
+        <button class="pBtn" id="pModalCopy" type="button">📋 Copy nội dung</button>
+      </div>
+
+      <div class="pModalHint" id="pModalHint">Mẹo: Copy nội dung → mở Zalo → dán để chốt nhanh.</div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
