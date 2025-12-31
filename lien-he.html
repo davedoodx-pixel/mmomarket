@@ -724,8 +724,12 @@ Mình cần tư vấn và chốt đơn giúp mình nhé.`;
     });
 
     // click nút giỏ hàng
-    grid.addEventListener("click", (e)=>{
-      const btn = e.target.closest(".cartBtn");
+const genMsgBtn = document.getElementById("genMsg");
+if(genMsgBtn) genMsgBtn.addEventListener("click", () => {
+  // ...
+});
+
+    const btn = e.target.closest(".cartBtn");
       if(!btn) return;
       const id = btn.getAttribute("data-id");
       const product = PRODUCTS.find(x => x.id === id);
