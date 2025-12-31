@@ -646,7 +646,28 @@ body.search-focus .searchBox{
     padding: 6px 10px;
   }
 }
+/* ===== Mobile: bung nút hỗ trợ khi click ===== */
+@media (max-width: 600px){
+  #supportBtn.open,
+  .support.open,
+  .supportBtn.open{
+    width:auto !important;
+    padding:0 16px !important;
+    border-radius:999px !important;
+    font-size:13px !important;
+    gap:8px;
+  }
 
+  #supportBtn.open::after,
+  .support.open::after,
+  .supportBtn.open::after{
+    content:"Hỗ trợ trực tuyến";
+    font-weight:800;
+    font-size:13px;
+    margin-left:6px;
+    white-space:nowrap;
+  }
+}
   </style>
 </head>
 
@@ -1075,7 +1096,37 @@ document.addEventListener("keydown", (e)=>{
     searchInput?.blur();
   }
 });
+// ===== Mobile: click để bung nút hỗ trợ =====
+(function(){
+  const btn = document.getElementById("supportBtn") 
+           || document.querySelector(".support") 
+           || document.querySelector(".supportBtn");
 
+  if(!btn) return;
+
+  const isMobile = window.matchMedia("(max-width: 600px)").matches;
+
+  if(isMobile){
+    let opened = false;
+
+    btn.addEventListener("click", (e)=>{
+      if(!opened){
+        e.preventDefault();      // chặn click lần đầu
+        btn.classList.add("open");
+        opened = true;
+      }
+      // lần 2 sẽ click bình thường (mở Zalo / modal)
+    });
+
+    // bấm ra ngoài thì thu lại
+    document.addEventListener("click", (e)=>{
+      if(opened && !btn.contains(e.target)){
+        btn.classList.remove("open");
+        opened = false;
+      }
+    });
+  }
+})();
 </script>
 <section class="trust">
   <div class="trustInner">
