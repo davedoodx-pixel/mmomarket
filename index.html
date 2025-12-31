@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MMO MARKET • Kho tài nguyên MMO</title>
+  <title>MMO MARKET • Sản phẩm nổi bật</title>
 
   <style>
     :root{
@@ -611,6 +611,79 @@
   .price{ font-size: 16px !important; }
   .note{ font-size: 12px !important; }
 }
+/* ===== Popup sản phẩm ===== */
+.pOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+.pModal{
+  background:#fff;
+  width:92%;
+  max-width:420px;
+  border-radius:18px;
+  overflow:hidden;
+  position:relative;
+  animation: pop .2s ease;
+}
+
+@keyframes pop{
+  from{transform:scale(.95);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+
+.pClose{
+  position:absolute;
+  top:10px;
+  right:10px;
+  border:none;
+  background:#fff;
+  border-radius:50%;
+  width:36px;
+  height:36px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.pImg{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  background:#f3f4f6;
+}
+
+.pBody{
+  padding:16px;
+}
+
+.pPrice{
+  font-weight:900;
+  color:#4f46e5;
+  margin:6px 0;
+}
+
+.pNote{
+  font-size:14px;
+  color:#555;
+  line-height:1.5;
+}
+
+.pZalo{
+  display:block;
+  margin-top:14px;
+  background:#4f46e5;
+  color:#fff;
+  text-align:center;
+  padding:12px;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:900;
+}
 
   </style>
 </head>
@@ -756,8 +829,9 @@
         totalSold += (p.sold || 0);
 
         const card = document.createElement("div");
-        card.className = "card";
+        card.className = "card";card.dataset.json = encodeURIComponent(JSON.stringify(p));
 
+        card.dataset.id = p.id;
         const saleText = (typeof p.sale === "number" && p.sale < 0) ? `${p.sale}%` : "";
         const saleBadge = saleText ? `<div class="saleBadge">${saleText}</div>` : "";
 
@@ -1009,6 +1083,44 @@ if(footerCats){
     document.getElementById("categoryBar")?.scrollIntoView({behavior:"smooth", block:"start"});
   });
 }
+// ===== Click sản phẩm -> mở popup (không cần p.id) =====
+const gridEl = document.getElementById("grid");
+
+if(gridEl){
+  gridEl.addEventListener("click", (e) => {
+    // Nếu bạn bấm đúng vào nút "Mua ngay" / "Zalo" trong card thì bỏ qua để nó hoạt động riêng
+    if(e.target.closest("a, button")) return;
+
+    const card = e.target.closest(".card");
+    if(!card) return;
+
+    try{
+      const data = card.dataset.json;
+      if(!data) return;
+      const p = JSON.parse(decodeURIComponent(data));
+      openPopup(p);
+    }catch(err){
+      console.error("Cannot open product popup:", err);
+    }
+  });
+}
+function openPopup(p){
+  document.getElementById("pImg").src = p.image || "";
+  document.getElementById("pName").innerText = p.name;
+  document.getElementById("pPrice").innerText = p.price;
+  document.getElementById("pNote").innerText =
+    p.note || "Nhắn Zalo để được tư vấn chi tiết.";
+
+  document.getElementById("pZalo").href =
+    "https://zalo.me/0396298999";
+
+  document.getElementById("productOverlay").style.display = "flex";
+}
+
+function closePopup(){
+  document.getElementById("productOverlay").style.display = "none";
+}
+
 
 </script>
 <section class="trust">
@@ -1121,6 +1233,22 @@ if(footerCats){
 
 <!-- Tooltip -->
 <div class="tip" id="tip" role="tooltip"></div>
+<!-- ===== POPUP SẢN PHẨM ===== -->
+<div id="productOverlay" class="pOverlay" style="display:none">
+  <div class="pModal">
+    <button class="pClose" onclick="closePopup()">✕</button>
+
+    <img id="pImg" class="pImg" />
+
+    <div class="pBody">
+      <h2 id="pName"></h2>
+      <div id="pPrice" class="pPrice"></div>
+      <p id="pNote" class="pNote"></p>
+
+      <a id="pZalo" class="pZalo" target="_blank">💬 Mở Zalo chốt đơn</a>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
