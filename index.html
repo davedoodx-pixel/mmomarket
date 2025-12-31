@@ -790,6 +790,45 @@ body.search-focus .searchBox{
     white-space:nowrap;
   }
 }
+/* ===== Zalo Button PRO ===== */
+.zaloBtnPro{
+  border: none !important;
+  padding: 10px 16px !important;
+  background: linear-gradient(135deg,#6d28d9,#4f46e5);
+  color:#fff !important;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  box-shadow:0 14px 40px rgba(79,70,229,.35);
+  transition: all .2s ease;
+}
+
+.zaloBtnPro .zaloIcon{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+  display:grid;
+  place-items:center;
+  font-size:14px;
+}
+
+.zaloBtnPro:hover{
+  transform: translateY(-1px);
+  box-shadow:0 22px 56px rgba(79,70,229,.45);
+  background: linear-gradient(135deg,#7c3aed,#6366f1);
+}
+
+/* Mobile: gọn chữ */
+@media (max-width: 520px){
+  .zaloBtnPro .zaloText{
+    display:none;
+  }
+  .zaloBtnPro{
+    padding:10px 12px !important;
+  }
+}
 
   </style>
 </head>
@@ -959,12 +998,13 @@ body.search-focus .searchBox{
         <p>Danh sách sản phẩm (bấm giỏ hàng để mua nhanh)</p>
       </div>
         <a
-  class="pill pill-zalo"
+  class="pill pill-zalo zaloBtnPro"
   id="zaloLink"
   href="https://zalo.me/0396298999"
   target="_blank"
 >
-  💬 Zalo
+  <span class="zaloIcon">💬</span>
+  <span class="zaloText">Chat Zalo</span>
 </a>
 
     </div>
