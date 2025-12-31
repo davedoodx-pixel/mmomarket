@@ -611,6 +611,41 @@
   .price{ font-size: 16px !important; }
   .note{ font-size: 12px !important; }
 }
+/* ===== Mobile: ẩn Đã bán để rộng chỗ ===== */
+@media (max-width: 680px){
+  #soldPill{ display:none !important; } /* nếu pill có id soldPill */
+}
+
+/* ===== Search phóng to (khi focus) ===== */
+.searchFocusOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(17,24,39,.55);
+  z-index:998;
+  display:none;
+}
+
+body.search-focus .searchFocusOverlay{ display:block; }
+
+body.search-focus .topbar{
+  position:relative;
+  z-index:999;               /* nằm trên overlay */
+}
+
+body.search-focus .searchBox{
+  width:100% !important;
+  max-width: 920px !important;
+  margin: 0 auto !important;
+  transform: scale(1.02);
+}
+
+/* Mobile: search full width */
+@media (max-width: 680px){
+  body.search-focus .searchBox{
+    max-width:none !important;
+    padding: 6px 10px;
+  }
+}
 
   </style>
 </head>
@@ -686,7 +721,7 @@
         <button class="searchBtn" id="searchBtn">⌕</button>
       </div>
 
-      <div class="pill">🔥 Đã bán: <b id="soldTotal">0</b></div>
+<div class="pill" id="soldPill">🔥 Đã bán: <b id="soldTotal">2.011</b></div>
     </div>
 
   </div>
@@ -1009,6 +1044,37 @@ if(footerCats){
     document.getElementById("categoryBar")?.scrollIntoView({behavior:"smooth", block:"start"});
   });
 }
+// ===== Search phóng to khi focus =====
+const searchInput = document.getElementById("search");
+const overlay = document.getElementById("searchFocusOverlay");
+
+function openSearchFocus(){
+  document.body.classList.add("search-focus");
+}
+function closeSearchFocus(){
+  document.body.classList.remove("search-focus");
+}
+
+if(searchInput){
+  searchInput.addEventListener("focus", openSearchFocus);
+  searchInput.addEventListener("blur", () => {
+    setTimeout(closeSearchFocus, 120);
+  });
+}
+
+if(overlay){
+  overlay.addEventListener("click", () => {
+    closeSearchFocus();
+    searchInput?.blur();
+  });
+}
+
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape"){
+    closeSearchFocus();
+    searchInput?.blur();
+  }
+});
 
 </script>
 <section class="trust">
@@ -1121,6 +1187,7 @@ if(footerCats){
 
 <!-- Tooltip -->
 <div class="tip" id="tip" role="tooltip"></div>
+<div class="searchFocusOverlay" id="searchFocusOverlay"></div>
 
 </body>
 </html>
