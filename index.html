@@ -1277,18 +1277,12 @@ if(pModalCopy){
   });
 }
 
-// ===== BẮT SỰ KIỆN CLICK TRÊN GRID (khỏi sửa render nhiều) =====
-const gridEl = document.getElementById("grid");
-if(gridEl){
-  gridEl.addEventListener("click", (e)=>{
-    // tìm phần tử card có data-id
-    const card = e.target.closest("[data-pid]");
-    if(!card) return;
-
-    const pid = card.getAttribute("data-pid");
-    const p = (typeof PRODUCTS !== "undefined") ? PRODUCTS.find(x => String(x.id) === String(pid)) : null;
-    if(p) openProductModal(p);
-  });
+function openPopup(p){
+  alert(
+    "Tên sản phẩm: " + p.name +
+    "\nGiá: " + p.price +
+    "\n\nBấm OK để đóng"
+  );
 }
 
 </script>
