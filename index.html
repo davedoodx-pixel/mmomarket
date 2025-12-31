@@ -1096,37 +1096,50 @@ document.addEventListener("keydown", (e)=>{
     searchInput?.blur();
   }
 });
-// ===== Mobile: click để bung nút hỗ trợ =====
+// ===== Mobile: tap 1 bung, tap 2 mới mở (chặn mọi onclick lần 1) =====
 (function(){
-  const btn = document.getElementById("supportBtn") 
-           || document.querySelector(".support") 
-           || document.querySelector(".supportBtn");
+  const btn =
+    document.getElementById("supportBtn") ||
+    document.querySelector(".support") ||
+    document.querySelector(".supportBtn");
 
   if(!btn) return;
 
   const isMobile = window.matchMedia("(max-width: 600px)").matches;
+  if(!isMobile) return;
 
-  if(isMobile){
-    let opened = false;
+  let opened = false;
 
-    btn.addEventListener("click", (e)=>{
-      if(!opened){
-        e.preventDefault();      // chặn click lần đầu
-        btn.classList.add("open");
-        opened = true;
-      }
-      // lần 2 sẽ click bình thường (mở Zalo / modal)
-    });
+  // Bắt ở CAPTURE phase để chặn trước mọi handler khác (onclick / addEventListener)
+  btn.addEventListener("click", (e) => {
+    if(!opened){
+      // Tap 1: chỉ bung, KHÔNG mở Zalo
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
 
-    // bấm ra ngoài thì thu lại
-    document.addEventListener("click", (e)=>{
-      if(opened && !btn.contains(e.target)){
+      btn.classList.add("open");
+      opened = true;
+      return false;
+    } else {
+      // Tap 2: cho phép chạy bình thường (mở Zalo/modal)
+      // Sau khi mở thì thu lại cho gọn
+      setTimeout(() => {
         btn.classList.remove("open");
         opened = false;
-      }
-    });
-  }
+      }, 300);
+    }
+  }, true); // ✅ capture = true
+
+  // Bấm ra ngoài thì thu
+  document.addEventListener("click", (e) => {
+    if(opened && !btn.contains(e.target)){
+      btn.classList.remove("open");
+      opened = false;
+    }
+  }, true);
 })();
+
 </script>
 <section class="trust">
   <div class="trustInner">
